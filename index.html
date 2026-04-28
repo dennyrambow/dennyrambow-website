@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Denny Rambow</title>
   <meta name="description" content="Commercial Pilot · Flight Instructor · AeroEdutainer — Berlin." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,9 +11,12 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
-      width: 100%;
+    html {
+      background: #050810;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
       background: #050810;
       font-family: 'Exo 2', sans-serif;
       color: #fff;
@@ -21,21 +24,24 @@
       justify-content: center;
     }
 
-    /* ── Mobile card ── */
+    /* ── Scrollable app column ── */
     .app {
       position: relative;
       width: 100%;
       max-width: 430px;
-      height: 100vh;
-      overflow: hidden;
-      flex-shrink: 0;
     }
 
-    /* ── Video Background ── */
+    /* ── Video — fixed, always covers viewport ── */
     .video-bg {
-      position: absolute;
-      inset: 0;
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
       z-index: 0;
+      pointer-events: none;
     }
 
     .video-bg video {
@@ -45,37 +51,59 @@
       filter: brightness(0.55) saturate(0.8);
     }
 
-    /* ── LED pixel overlay ── */
-    .led-overlay {
-      position: absolute;
-      inset: 0;
+    /* ── Extra darkening overlay for reading mode ── */
+    .read-dim {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
       z-index: 1;
-      background-image: radial-gradient(
-        circle,
-        transparent 76%,
-        rgba(0, 0, 0, 0.05) 76%
-      );
-      background-size: 10px 10px;
+      background: rgba(5, 8, 16, 0.84);
+      opacity: 0;
       pointer-events: none;
+      transition: opacity 1s ease;
     }
 
-    /* ── Subtle top vignette ── */
+    /* ── LED pixel overlay — fixed ── */
+    .led-overlay {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      z-index: 2;
+      background-image: radial-gradient(circle, transparent 76%, rgba(0,0,0,0.05) 76%);
+      background-size: 10px 10px;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+
+    /* ════════════════════════════════════════
+       LANDING SECTION
+    ════════════════════════════════════════ */
+    .landing-section {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 3;
+    }
+
     .overlay-top {
       position: absolute;
       inset: 0;
       z-index: 1;
-      background: linear-gradient(
-        to bottom,
-        rgba(5,8,16,0.4) 0%,
-        rgba(5,8,16,0.05) 28%,
-        transparent 55%
-      );
+      background: linear-gradient(to bottom, rgba(5,8,16,0.4) 0%, rgba(5,8,16,0.05) 28%, transparent 55%);
+      pointer-events: none;
     }
 
-    /* ── Portrait — centered, transparent bg ── */
     .portrait {
       position: absolute;
-      bottom: 6vh;
+      bottom: 11vh;
       left: 45%;
       transform: translateX(-50%);
       height: 61vh;
@@ -83,24 +111,17 @@
       z-index: 2;
       opacity: 0;
       animation: fadeIn 1.2s 0.5s ease forwards;
+      transition: opacity 0.7s ease;
     }
 
-    /* ── Bottom gradient — dark for text readability ── */
     .overlay-bottom {
       position: absolute;
       inset: 0;
       z-index: 3;
-      background: linear-gradient(
-        to top,
-        rgba(5,8,16,0.97) 0%,
-        rgba(5,8,16,0.88) 20%,
-        rgba(5,8,16,0.55) 36%,
-        rgba(5,8,16,0.2)  52%,
-        transparent       66%
-      );
+      background: linear-gradient(to top, rgba(5,8,16,0.97) 0%, rgba(5,8,16,0.88) 20%, rgba(5,8,16,0.55) 36%, rgba(5,8,16,0.2) 52%, transparent 66%);
+      pointer-events: none;
     }
 
-    /* ── Quote — centered on video ── */
     .quote-overlay {
       position: absolute;
       top: 22%;
@@ -115,12 +136,13 @@
       color: rgba(255,255,255,0.58);
       letter-spacing: 0.03em;
       line-height: 1.6;
-      padding-top: 0.9rem;
+      padding: 0.9rem 0;
       border-top: 1px solid rgba(255,255,255,0.18);
       border-bottom: 1px solid rgba(255,255,255,0.18);
-      padding-bottom: 0.9rem;
       opacity: 0;
       animation: fadeIn 1s 1.2s ease forwards;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
     }
 
     .quote-overlay::before {
@@ -134,208 +156,39 @@
       margin-bottom: 0.4rem;
     }
 
-    /* ── Content block ── */
+    .identifier {
+      position: absolute;
+      top: 4vh;
+      left: 1.7rem;
+      z-index: 5;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      color: rgba(100, 190, 255, 0.7);
+      text-transform: uppercase;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeIn 1s 0.4s ease forwards;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Name / headline / location block */
     .content {
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
       z-index: 5;
-      padding: 1.5rem 1.7rem 1.8rem;
-    }
-
-    /* ── Technical identifier — top left ── */
-    .identifier {
-      position: absolute;
-      top: 4vh;
-      left: 1.7rem;
-      z-index: 6;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.14em;
-      color: rgba(100, 190, 255, 0.45);
-      text-transform: uppercase;
-      line-height: 1.8;
-      opacity: 0;
-      animation: fadeIn 1s 0.4s ease forwards;
-    }
-
-    /* ── Burger menu — top right ── */
-    .burger {
-      position: absolute;
-      top: 3.5vh;
-      right: 1.7rem;
-      z-index: 6;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 6px;
-      opacity: 0;
-      animation: fadeIn 1s 0.4s ease forwards;
-    }
-
-    .burger span {
-      display: block;
-      width: 20px;
-      height: 1.5px;
-      background: rgba(255,255,255,0.5);
-      transition: background 0.2s;
-    }
-
-    .burger:hover span {
-      background: rgba(255,255,255,0.85);
-    }
-
-    /* ── Menu overlay ── */
-    .menu-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      background: rgba(5, 8, 16, 0.94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease;
-      display: flex;
-      flex-direction: column;
-      padding: 3.5vh 1.7rem 3vh;
-      overflow: hidden;
-    }
-
-    .menu-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .menu-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2vh;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      padding-bottom: 1rem;
-    }
-
-    .menu-logo {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: rgba(100, 190, 255, 0.55);
-    }
-
-    .menu-footer {
-      margin-top: auto;
-      padding-top: 1rem;
-      border-top: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .menu-footer p {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.45rem;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.18);
-      line-height: 1.8;
-    }
-
-    .menu-close {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.45);
-      font-size: 1.1rem;
-      cursor: pointer;
-      padding: 4px;
-      line-height: 1;
-      transition: color 0.2s;
-    }
-
-    .menu-close:hover { color: #fff; }
-
-.menu-section {
-      margin-bottom: 1.4vh;
-    }
-
-    .menu-section h3 {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.48rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(100, 190, 255, 0.5);
-      margin-bottom: 0.5rem;
-      padding-bottom: 0.35rem;
-      border-bottom: 1px solid rgba(100, 190, 255, 0.15);
-    }
-
-    .menu-section p {
-      font-size: 0.6rem;
-      font-weight: 300;
-      color: rgba(255,255,255,0.32);
-      line-height: 1.6;
-      margin-bottom: 0.3rem;
-    }
-
-    .menu-section a {
-      color: rgba(100, 190, 255, 0.55);
-      text-decoration: none;
-    }
-
-    .menu-socials {
-      display: flex;
-      gap: 0.9rem;
-      align-items: center;
-      padding-top: 0.2rem;
-    }
-
-    .menu-socials a {
-      color: rgba(255,255,255,0.3);
-      transition: color 0.2s;
-      display: flex;
-    }
-
-    .menu-socials a:hover { color: rgba(100, 190, 255, 0.8); }
-
-    .menu-socials svg {
-      width: 15px;
-      height: 15px;
-    }
-
-    .menu-work-link {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      padding: 0.6rem 0.7rem;
-      border: 1px solid rgba(100, 190, 255, 0.15);
-      border-radius: 4px;
-      text-decoration: none;
-      transition: border-color 0.2s;
-    }
-
-    .menu-work-link:hover { border-color: rgba(100, 190, 255, 0.35); }
-
-    .menu-work-title {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.55rem;
-      letter-spacing: 0.14em;
-      color: rgba(100, 190, 255, 0.6);
-      text-transform: uppercase;
-    }
-
-    .menu-work-desc {
-      font-size: 0.58rem;
-      font-weight: 300;
-      color: rgba(255,255,255,0.28);
-      line-height: 1.5;
+      padding: 0 1.7rem calc(110px + env(safe-area-inset-bottom, 0px));
+      transition: opacity 0.6s ease;
     }
 
     .eyebrow {
-      font-size: 0.58rem;
+      font-size: 0.68rem;
       font-weight: 500;
       letter-spacing: 0.24em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.38);
+      color: rgba(255,255,255,0.55);
       margin-bottom: 0.45rem;
       padding-left: 0.65rem;
       border-left: 2px solid rgba(100, 190, 255, 0.5);
@@ -357,32 +210,99 @@
       animation: fadeUp 0.8s 0.65s ease forwards;
     }
 
-    /* ── Subtitle ── */
     .sub {
       margin-top: 0.35rem;
       font-size: clamp(0.68rem, 2.5vw, 0.78rem);
       font-weight: 400;
       color: rgba(255,255,255,0.5);
-      letter-spacing: 0.01em;
       text-shadow: 0 1px 6px rgba(5,8,16,0.9);
       opacity: 0;
       animation: fadeUp 0.8s 0.80s ease forwards;
     }
 
-    /* ── Location — above buttons ── */
     .location {
       margin-top: 1.1rem;
-      margin-bottom: 1.2rem;
       font-family: 'Space Mono', monospace;
       font-size: 0.52rem;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.55);
       opacity: 0;
       animation: fadeIn 1s 1.0s ease forwards;
+      transition: opacity 0.5s ease;
     }
 
-    /* ── Links — single row ── */
+    @keyframes bounceUp {
+      0%, 100% { transform: translateY(0); opacity: 0.28; }
+      50%       { transform: translateY(-6px); opacity: 0.6; }
+    }
+
+    /* ════════════════════════════════════════
+       FIXED PERSISTENT ELEMENTS
+    ════════════════════════════════════════ */
+
+    /* Burger — top right, always */
+    .burger {
+      position: fixed;
+      top: 3.5vh;
+      right: max(1.7rem, calc(50% - 215px + 1.7rem));
+      z-index: 22;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 6px;
+      opacity: 0;
+      animation: fadeIn 1s 0.4s ease forwards;
+    }
+
+    .burger span {
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: rgba(255,255,255,0.5);
+      transition: background 0.2s;
+    }
+
+    .burger:hover span { background: rgba(255,255,255,0.85); }
+
+    /* Links footer — bottom, always — with iOS safe area */
+    .links-footer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      padding: 1rem 1.7rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+      z-index: 10;
+      background: linear-gradient(to top, rgba(5,8,16,0.95) 40%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* Scroll hint inside footer — hidden in reading mode */
+    .links-footer .scroll-hint {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.7rem;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .links-footer .scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      color: rgba(255,255,255,0.28);
+      animation: bounceUp 2.2s 2s ease-in-out infinite;
+    }
+
+    .is-reading .links-footer .scroll-hint {
+      opacity: 0;
+    }
+
     .links {
       display: flex;
       flex-wrap: nowrap;
@@ -392,6 +312,7 @@
       -ms-overflow-style: none;
       opacity: 0;
       animation: fadeUp 0.8s 1.05s ease forwards;
+      pointer-events: all;
     }
 
     .links::-webkit-scrollbar { display: none; }
@@ -431,6 +352,415 @@
       opacity: 0.7;
     }
 
+    /* Portrait mini — bottom left, appears in reading mode */
+    .portrait-mini {
+      position: fixed;
+      bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+      left: max(1rem, calc(50% - 215px + 1rem));
+      width: 56px;
+      height: 72px;
+      object-fit: cover;
+      object-position: top center;
+      z-index: 8;
+      opacity: 0;
+      transform: scale(0.88);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    /* Reading header — top, appears in reading mode */
+    .reading-header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      padding: 3vh 1.7rem 2.5vh;
+      background: linear-gradient(to bottom, rgba(5,8,16,0.97) 55%, transparent 100%);
+      z-index: 9;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+
+    .rh-eyebrow {
+      font-size: 0.5rem;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      padding-left: 0.5rem;
+      border-left: 2px solid rgba(100, 190, 255, 0.4);
+      margin-bottom: 0.18rem;
+    }
+
+    .rh-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 0.18rem;
+      line-height: 1.1;
+    }
+
+    .rh-sub {
+      font-size: 0.48rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.3);
+      margin-top: 0.12rem;
+      letter-spacing: 0.01em;
+    }
+
+    /* ════════════════════════════════════════
+       MENU OVERLAY
+    ════════════════════════════════════════ */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      z-index: 24;
+      background: rgba(5, 8, 16, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5vh 1.7rem 2vh;
+      overflow: hidden;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5vh;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 0.7rem;
+    }
+
+    .menu-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: rgba(100, 190, 255, 0.55);
+    }
+
+    .menu-footer {
+      margin-top: auto;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .menu-footer p {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.03em;
+      color: rgba(255,255,255,0.18);
+      line-height: 1.7;
+    }
+
+    .menu-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.45);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .menu-close:hover { color: #fff; }
+
+    .menu-section {
+      margin-bottom: 1.1vh;
+    }
+
+    .menu-section h3 {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(100, 190, 255, 0.5);
+      margin-bottom: 0.35rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid rgba(100, 190, 255, 0.15);
+    }
+
+    .menu-section p {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.55;
+      margin-bottom: 0.2rem;
+    }
+
+    .menu-section a {
+      color: rgba(100, 190, 255, 0.55);
+      text-decoration: none;
+    }
+
+    .menu-socials {
+      display: flex;
+      gap: 0.9rem;
+      align-items: center;
+      padding-top: 0.2rem;
+    }
+
+    .menu-socials a {
+      color: rgba(255,255,255,0.3);
+      transition: opacity 0.2s;
+      display: flex;
+    }
+
+    .menu-socials a:hover { opacity: 0.75; }
+
+    .menu-socials svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .menu-work-link {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: 0.5rem 0.7rem;
+      border: 1px solid rgba(100, 190, 255, 0.15);
+      border-radius: 4px;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+
+    .menu-work-link:hover { border-color: rgba(100, 190, 255, 0.35); }
+
+    .menu-work-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      color: rgba(100, 190, 255, 0.6);
+      text-transform: uppercase;
+    }
+
+    .menu-work-desc {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.5;
+    }
+
+    /* ════════════════════════════════════════
+       READING SECTION
+    ════════════════════════════════════════ */
+    .reading-section {
+      position: relative;
+      z-index: 3;
+      padding: 9vh 1.7rem calc(130px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Intro drop-cap paragraph */
+    .cv-intro {
+      margin-bottom: 2.8rem;
+    }
+
+    .cv-intro p {
+      font-size: 1.02rem;
+      font-weight: 300;
+      line-height: 1.85;
+      text-align: justify;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .cv-intro p::first-letter {
+      font-size: 3.4rem;
+      font-weight: 700;
+      line-height: 0.72;
+      float: left;
+      margin-right: 0.07em;
+      margin-top: 0.1em;
+      color: #fff;
+    }
+
+    /* Timeline entry */
+    .cv-entry {
+      display: grid;
+      grid-template-columns: 3.2rem 1px 1fr;
+      gap: 0 1rem;
+      margin-bottom: 2.2rem;
+    }
+
+    .cv-year {
+      padding-top: 0.3rem;
+      text-align: right;
+    }
+
+    .cv-year span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.08em;
+      color: rgba(100, 190, 255, 0.6);
+      display: block;
+    }
+
+    .cv-timeline-line {
+      position: relative;
+      background: linear-gradient(to bottom, rgba(100,190,255,0.5) 0%, rgba(100,190,255,0.08) 100%);
+    }
+
+    .cv-timeline-line::before {
+      content: '';
+      position: absolute;
+      top: 0.4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(100, 190, 255, 0.8);
+      box-shadow: 0 0 6px rgba(100, 190, 255, 0.4);
+    }
+
+    .cv-body {
+      padding-bottom: 0.4rem;
+    }
+
+    .cv-body h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.53rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(100, 190, 255, 0.65);
+      margin-bottom: 0.4rem;
+      padding-top: 0.22rem;
+    }
+
+    .cv-body p {
+      font-size: 0.92rem;
+      font-weight: 300;
+      line-height: 1.8;
+      text-align: justify;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* Section break */
+    .cv-chapter {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 2.2rem 0 2rem;
+    }
+
+    .cv-chapter span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.48rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(100, 190, 255, 0.35);
+      white-space: nowrap;
+    }
+
+    .cv-chapter::before,
+    .cv-chapter::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(100, 190, 255, 0.12);
+    }
+
+    /* Closing quote */
+    .cv-closing {
+      margin-top: 3rem;
+      padding: 1.4rem 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      text-align: center;
+    }
+
+    .cv-closing p {
+      font-size: 0.95rem;
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+    }
+
+    .cv-closing p::before {
+      content: '\201C';
+      font-family: Georgia, serif;
+      font-size: 2.2rem;
+      line-height: 0.5;
+      color: rgba(100,190,255,0.25);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ════════════════════════════════════════
+       SCROLL STATE TRANSITIONS
+    ════════════════════════════════════════ */
+
+    /* Elements that fade OUT when reading */
+    .quote-overlay,
+    .identifier,
+    .location,
+    .scroll-hint,
+    .portrait,
+    .content,
+    .overlay-bottom,
+    .overlay-top {
+      transition: opacity 0.65s ease;
+    }
+
+    .is-reading .quote-overlay,
+    .is-reading .identifier,
+    .is-reading .location,
+    .is-reading .scroll-hint,
+    .is-reading .portrait,
+    .is-reading .content,
+    .is-reading .overlay-bottom,
+    .is-reading .overlay-top {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    /* LED fades out */
+    .is-reading .led-overlay {
+      opacity: 0;
+    }
+
+    /* Extra dim fades in */
+    .is-reading .read-dim {
+      opacity: 1;
+    }
+
+    /* Reading header fades in */
+    .is-reading .reading-header {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Portrait mini fades in */
+    .is-reading .portrait-mini {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: all;
+    }
+
     /* ── Animations ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
@@ -444,152 +774,280 @@
 </head>
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <!-- Video Background -->
-    <div class="video-bg">
-      <video autoplay muted loop playsinline>
-        <source src="bg.mp4" type="video/mp4" />
-      </video>
-    </div>
+  <!-- ── Video Background (fixed) ── -->
+  <div class="video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="bg.mp4" type="video/mp4" />
+    </video>
+  </div>
 
-    <!-- LED pixel overlay -->
-    <div class="led-overlay"></div>
+  <!-- ── Reading dim overlay ── -->
+  <div class="read-dim"></div>
 
-    <!-- Top vignette -->
+  <!-- ── LED overlay (fixed) ── -->
+  <div class="led-overlay"></div>
+
+  <!-- ══════════════════════════════════════
+       LANDING SECTION
+  ══════════════════════════════════════ -->
+  <section class="landing-section">
+
     <div class="overlay-top"></div>
 
-    <!-- Portrait — transparent PNG -->
     <img class="portrait" src="Portrait_cut.png" alt="Denny Rambow" />
 
-    <!-- Bottom gradient -->
     <div class="overlay-bottom"></div>
 
-    <!-- Identifier top left -->
     <p class="identifier">CPL(A) &nbsp;|&nbsp; A320 COP/IR &nbsp;|&nbsp; SEP (L) PIC<br>FI(A) rp &nbsp;|&nbsp; PPL SE SP night</p>
 
-    <!-- Burger menu top right -->
-    <button class="burger" id="burgerBtn" aria-label="Menü öffnen">
-      <span></span><span></span><span></span>
-    </button>
+    <p class="quote-overlay">A good pilot is always learning.</p>
 
-    <!-- Menu overlay -->
-    <div class="menu-overlay" id="menuOverlay">
-      <div class="menu-header">
-        <span class="menu-logo">DENNY RAMBOW</span>
-        <button class="menu-close" id="menuClose">&#x2715;</button>
-      </div>
+    <div class="content">
+      <p class="eyebrow">Commercial Pilot &amp; Flight Instructor</p>
+      <h1 class="name">Denny Rambow</h1>
+      <p class="sub">Airbus A320 &nbsp;·&nbsp; Aviation Business, B.Sc. &nbsp;·&nbsp; AeroEdutainer</p>
+      <p class="location">&#9658;&nbsp; Berlin, Germany</p>
+    </div>
 
-      <div class="menu-section">
-        <h3>Impressum</h3>
-        <p>Angaben gemäß § 5 TMG &amp; § 18 Abs. 2 MStV</p>
-        <p>Denny Rambow<br>Beusselstraße 42, 10553 Berlin<br><a href="mailto:mail@dennyrambow.de">mail@dennyrambow.de</a></p>
-      </div>
+  </section>
 
-      <div class="menu-section">
-        <h3>Datenschutz</h3>
-        <p>Diese Website erhebt keine personenbezogenen Daten, verwendet keine Cookies und kein Tracking. Beim Aufruf werden technische Zugriffsdaten (IP, Zeitstempel) vom Hosting-Provider in Server-Logs gespeichert und nach 7 Tagen gelöscht.</p>
-        <p>Verantwortlicher (DSGVO): Denny Rambow, Berlin.<br>Auskunft &amp; Löschung: <a href="mailto:mail@dennyrambow.de">mail@dennyrambow.de</a></p>
-      </div>
+  <!-- ══════════════════════════════════════
+       READING SECTION
+  ══════════════════════════════════════ -->
+  <section class="reading-section">
 
-      <div class="menu-section">
-        <h3>Haftungsausschluss</h3>
-        <p>Inhalte wurden sorgfältig erstellt, Vollständigkeit wird nicht garantiert. Für externe Links wird keine Haftung übernommen — zum Zeitpunkt der Verlinkung waren keine rechtswidrigen Inhalte erkennbar.</p>
-      </div>
+    <div class="cv-intro">
+      <p>My personal journey into aviation began in March 2011, when I joined Lufthansa German Airlines as a flight attendant on the Airbus fleet. This was my first step into professional aviation — and from that moment on, my goal was clear: becoming an airline pilot.</p>
+    </div>
 
-      <div class="menu-section">
-        <h3>Connect</h3>
-        <div class="menu-socials">
-          <a href="https://www.linkedin.com/in/denny-rambow-99b925121/" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          </a>
-          <a href="https://www.instagram.com/dennyrambow/" target="_blank" rel="noopener" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-          </a>
-          <a href="https://www.youtube.com/@dennyrambow" target="_blank" rel="noopener" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
-          <a href="https://soundcloud.com/dennyrambow" target="_blank" rel="noopener" aria-label="SoundCloud">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.017 0-.034.002-.051.003A.64.64 0 0 0 .549 12.6l-.548 3.4.548 3.3a.64.64 0 0 0 .627.375c.017 0 .034.002.051.002.355 0 .643-.288.643-.643V12.87a.643.643 0 0 0-.695-.645zm2.398-.41a.64.64 0 0 0-.638.638l-.41 3.547.41 3.307a.638.638 0 0 0 1.276 0l.467-3.307-.467-3.547a.638.638 0 0 0-.638-.638zm2.486-.4a.77.77 0 0 0-.77.77l-.354 3.54.354 3.285a.77.77 0 0 0 1.54 0l.4-3.285-.4-3.54a.77.77 0 0 0-.77-.77zm2.533-.2a.9.9 0 0 0-.9.9l-.304 3.44.304 3.2a.9.9 0 0 0 1.8 0l.343-3.2-.343-3.44a.9.9 0 0 0-.9-.9zm2.568.036a1.04 1.04 0 0 0-1.04 1.04l-.254 3.324.254 3.13a1.04 1.04 0 0 0 2.08 0l.287-3.13-.287-3.324a1.04 1.04 0 0 0-1.04-1.04zm2.614-.5a1.18 1.18 0 0 0-1.18 1.18l-.2 3.644.2 3.03a1.18 1.18 0 0 0 2.36 0l.226-3.03-.226-3.644a1.18 1.18 0 0 0-1.18-1.18zm4.5-1.72a5.52 5.52 0 0 0-1.96.358 6.504 6.504 0 0 0-6.49-6.12 6.49 6.49 0 0 0-2.54.52v11.34h11.07a3.46 3.46 0 0 0 3.46-3.46 3.46 3.46 0 0 0-3.54-3.638z"/></svg>
-          </a>
-          <a href="mailto:mail@dennyrambow.de" aria-label="E-Mail">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="menu-section">
-        <h3>Work</h3>
-        <a class="menu-work-link" href="https://fat.aero" target="_blank" rel="noopener">
-          <span class="menu-work-title">fat.aero</span>
-          <span class="menu-work-desc">Flight &amp; Aviation Training by Denny Rambow</span>
-        </a>
-      </div>
-
-      <div class="menu-footer">
-        <p>&#169; 2026 Denny Rambow. All rights reserved.</p>
-        <p>Web Design &amp; Development by Denny Rambow</p>
+    <div class="cv-entry">
+      <div class="cv-year"><span>2005</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>First Career</h4>
+        <p>After completing my German A-levels, I trained as a paramedic and worked in emergency medical services. Alongside this, I was self-employed for several years as a presenter and host, in web and media design, and in music production — early years defined by curiosity and breadth.</p>
       </div>
     </div>
 
-    <!-- Quote centered -->
-    <p class="quote-overlay">A good pilot is always learning.</p>
-
-    <!-- Main Content -->
-    <div class="content">
-
-      <p class="eyebrow">Commercial Pilot &amp; Flight Instructor</p>
-
-      <h1 class="name">Denny Rambow</h1>
-
-      <p class="sub">Airbus A320 &nbsp;·&nbsp; Aviation Business, B.Sc. &nbsp;·&nbsp; AeroEdutainer</p>
-
-      <p class="location">&#9658;&nbsp; Berlin, Germany</p>
-
-      <div class="links">
-
-        <a href="https://www.linkedin.com/in/denny-rambow-99b925121/" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-          LinkedIn
-        </a>
-
-        <a href="https://www.instagram.com/dennyrambow/" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-          </svg>
-          Instagram
-        </a>
-
-        <a href="https://fat.aero" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-          </svg>
-          FAT.aero
-        </a>
-
-        <a href="mailto:mail@dennyrambow.de">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          Contact
-        </a>
-
+    <div class="cv-entry">
+      <div class="cv-year"><span>2011</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>Entry into Aviation</h4>
+        <p>In March 2011, I joined Lufthansa German Airlines as a flight attendant on the Airbus fleet — my first step into professional aviation. The decision was made: I wanted to fly from the front.</p>
       </div>
+    </div>
+
+    <div class="cv-chapter">
+      <span>Flight Training</span>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-year"><span>2018</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>Pilot Academy</h4>
+        <p>In February 2018, I started my integrated ATPL(A) training at the Lufthansa Aviation Training Pilot Academy. During training, I successfully passed the Lufthansa Group pilot selection.</p>
+      </div>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-year"><span>2019</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>Graduation</h4>
+        <p>Graduated in December 2019 with CPL(A), MCC, and ATPL(A) theory — fully prepared for line operations on a commercial aircraft.</p>
+      </div>
+    </div>
+
+    <div class="cv-chapter">
+      <span>Airline Operations</span>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-year"><span>2020</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>First Officer · Eurowings</h4>
+        <p>Today I am a First Officer on the Airbus A320 family with Eurowings, a position I have proudly held for more than three years. In addition to my airline duties, I am a qualified flight instructor — combining operational flying with teaching and mentoring aspiring pilots.</p>
+      </div>
+    </div>
+
+    <div class="cv-entry">
+      <div class="cv-year"><span>Now</span></div>
+      <div class="cv-timeline-line"></div>
+      <div class="cv-body">
+        <h4>Academia &amp; Beyond</h4>
+        <p>Currently pursuing a Bachelor of Science in Aviation Business &amp; Piloting, deepening my understanding of airline operations, management, and the future role of data and AI in aviation. Based in Berlin — always open for new challenges.</p>
+      </div>
+    </div>
+
+    <div class="cv-closing">
+      <p>A good pilot is always learning.</p>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FIXED PERSISTENT ELEMENTS
+  ══════════════════════════════════════ -->
+
+  <!-- Burger — always top right -->
+  <button class="burger" id="burgerBtn" aria-label="Menü öffnen">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Portrait mini — bottom left, reading mode -->
+  <img class="portrait-mini" src="Portrait_cut.png" alt="Denny Rambow" />
+
+  <!-- Reading header — top, reading mode -->
+  <div class="reading-header">
+    <p class="rh-eyebrow">Commercial Pilot &amp; Flight Instructor</p>
+    <h2 class="rh-name">Denny Rambow</h2>
+    <p class="rh-sub">Airbus A320 &nbsp;·&nbsp; Aviation Business, B.Sc. &nbsp;·&nbsp; AeroEdutainer</p>
+  </div>
+
+  <!-- Links footer — always bottom -->
+  <div class="links-footer">
+    <div class="scroll-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+      </svg>
+    </div>
+    <div class="links">
+
+      <a href="https://www.linkedin.com/in/denny-rambow-99b925121/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="color:#0A66C2">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        LinkedIn
+      </a>
+
+      <a href="https://www.instagram.com/dennyrambow/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><defs><linearGradient id="ig-l" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FED373"/><stop offset="25%" stop-color="#F15245"/><stop offset="50%" stop-color="#D92E7F"/><stop offset="75%" stop-color="#9B36B7"/><stop offset="100%" stop-color="#515BD4"/></linearGradient></defs>
+          <path fill="url(#ig-l)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+        </svg>
+        Instagram
+      </a>
+
+      <a href="https://fat.aero" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="color:#FFD700">
+          <path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        </svg>
+        FAT.aero
+      </a>
+
+      <a href="mailto:mail@dennyrambow.de">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:#ffffff">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        </svg>
+        Contact
+      </a>
 
     </div>
   </div>
 
-  <script>
-    const burger = document.getElementById('burgerBtn');
-    const overlay = document.getElementById('menuOverlay');
-    const close = document.getElementById('menuClose');
-    burger.addEventListener('click', () => overlay.classList.add('open'));
-    close.addEventListener('click', () => overlay.classList.remove('open'));
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
-  </script>
+  <!-- ══════════════════════════════════════
+       MENU OVERLAY
+  ══════════════════════════════════════ -->
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-header">
+      <span class="menu-logo">DENNY RAMBOW</span>
+      <button class="menu-close" id="menuClose">&#x2715;</button>
+    </div>
+
+    <div class="menu-section">
+      <h3>Impressum</h3>
+      <p>Angaben gemäß § 5 TMG &amp; § 18 Abs. 2 MStV</p>
+      <p>Denny Rambow<br>Beusselstraße 42, 10553 Berlin<br><a href="mailto:mail@dennyrambow.de">mail@dennyrambow.de</a></p>
+    </div>
+
+    <div class="menu-section">
+      <h3>Datenschutz</h3>
+      <p>Diese Website erhebt keine personenbezogenen Daten, verwendet keine Cookies und kein Tracking. Beim Aufruf werden technische Zugriffsdaten (IP-Adresse, Zeitstempel, Browsertyp) vom Hosting-Provider in Server-Logfiles gespeichert und nach 7 Tagen automatisch gelöscht. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+      <p>Verantwortlicher gem. Art. 4 Abs. 7 DSGVO: Denny Rambow, Berlin. Auskunft, Berichtigung &amp; Löschung (Art. 15–17 DSGVO) auf Anfrage per E-Mail.</p>
+    </div>
+
+    <div class="menu-section">
+      <h3>Haftungsausschluss</h3>
+      <p>Die Inhalte wurden mit größtmöglicher Sorgfalt erstellt. Für Richtigkeit, Vollständigkeit und Aktualität wird gemäß § 7 Abs. 1 TMG Verantwortung übernommen. Für verlinkte externe Seiten ist der jeweilige Anbieter verantwortlich — zum Zeitpunkt der Verlinkung waren keine rechtswidrigen Inhalte erkennbar.</p>
+    </div>
+
+    <div class="menu-section">
+      <h3>Connect</h3>
+      <div class="menu-socials">
+        <a href="https://www.linkedin.com/in/denny-rambow-99b925121/" target="_blank" rel="noopener" aria-label="LinkedIn" style="color:#0A66C2">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/dennyrambow/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="ig-m" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FED373"/><stop offset="25%" stop-color="#F15245"/><stop offset="50%" stop-color="#D92E7F"/><stop offset="75%" stop-color="#9B36B7"/><stop offset="100%" stop-color="#515BD4"/></linearGradient></defs><path fill="url(#ig-m)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@dennyrambow" target="_blank" rel="noopener" aria-label="YouTube" style="color:#FF0000">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a href="https://soundcloud.com/dennyrambow" target="_blank" rel="noopener" aria-label="SoundCloud" style="color:#FF5500">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.017 0-.034.002-.051.003A.64.64 0 0 0 .549 12.6l-.548 3.4.548 3.3a.64.64 0 0 0 .627.375c.017 0 .034.002.051.002.355 0 .643-.288.643-.643V12.87a.643.643 0 0 0-.695-.645zm2.398-.41a.64.64 0 0 0-.638.638l-.41 3.547.41 3.307a.638.638 0 0 0 1.276 0l.467-3.307-.467-3.547a.638.638 0 0 0-.638-.638zm2.486-.4a.77.77 0 0 0-.77.77l-.354 3.54.354 3.285a.77.77 0 0 0 1.54 0l.4-3.285-.4-3.54a.77.77 0 0 0-.77-.77zm2.533-.2a.9.9 0 0 0-.9.9l-.304 3.44.304 3.2a.9.9 0 0 0 1.8 0l.343-3.2-.343-3.44a.9.9 0 0 0-.9-.9zm2.568.036a1.04 1.04 0 0 0-1.04 1.04l-.254 3.324.254 3.13a1.04 1.04 0 0 0 2.08 0l.287-3.13-.287-3.324a1.04 1.04 0 0 0-1.04-1.04zm2.614-.5a1.18 1.18 0 0 0-1.18 1.18l-.2 3.644.2 3.03a1.18 1.18 0 0 0 2.36 0l.226-3.03-.226-3.644a1.18 1.18 0 0 0-1.18-1.18zm4.5-1.72a5.52 5.52 0 0 0-1.96.358 6.504 6.504 0 0 0-6.49-6.12 6.49 6.49 0 0 0-2.54.52v11.34h11.07a3.46 3.46 0 0 0 3.46-3.46 3.46 3.46 0 0 0-3.54-3.638z"/></svg>
+        </a>
+        <a href="mailto:mail@dennyrambow.de" aria-label="E-Mail" style="color:#ffffff">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="menu-section">
+      <h3>Work</h3>
+      <a class="menu-work-link" href="https://fat.aero" target="_blank" rel="noopener">
+        <span class="menu-work-title">fat.aero</span>
+        <span class="menu-work-desc">Flight &amp; Aviation Training by Denny Rambow</span>
+      </a>
+    </div>
+
+    <div class="menu-footer">
+      <p>&#169; 2026 Denny Rambow. All rights reserved.</p>
+      <p>Web Design &amp; Development by Denny Rambow</p>
+    </div>
+  </div>
+
+</div><!-- /.app -->
+
+<script>
+  // ── Burger menu ──
+  const burger    = document.getElementById('burgerBtn');
+  const menuOvl   = document.getElementById('menuOverlay');
+  const menuClose = document.getElementById('menuClose');
+  burger.addEventListener('click', () => menuOvl.classList.add('open'));
+  menuClose.addEventListener('click', () => menuOvl.classList.remove('open'));
+  menuOvl.addEventListener('click', e => {
+    if (e.target === menuOvl) menuOvl.classList.remove('open');
+  });
+
+  // ── iOS Safari video loop fallback ──
+  const vid = document.querySelector('.video-bg video');
+  if (vid) {
+    vid.addEventListener('ended', () => { vid.currentTime = 0; vid.play().catch(() => {}); });
+    document.addEventListener('touchstart', () => {
+      if (vid.paused) vid.play().catch(() => {});
+    }, { once: true });
+  }
+
+  // ── Scroll-driven landing → reading transition ──
+  const THRESHOLD = 80;
+  let ticking = false;
+
+  function handleScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        document.body.classList.toggle('is-reading', window.scrollY > THRESHOLD);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+</script>
+
 </body>
 </html>
