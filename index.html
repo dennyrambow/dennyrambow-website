@@ -11,6 +11,10 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
     html {
       background: #050810;
       -webkit-text-size-adjust: 100%;
@@ -31,14 +35,12 @@
       max-width: 430px;
     }
 
-    /* ── Video — fixed, always covers viewport ── */
+    /* ── Video — fixed, fills entire viewport ── */
     .video-bg {
       position: fixed;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
+      left: 0;
+      width: 100vw;
       height: 100vh;
       z-index: 0;
       pointer-events: none;
@@ -51,52 +53,52 @@
       filter: brightness(0.55) saturate(0.8);
     }
 
-    /* ── Extra darkening overlay for reading mode ── */
+    /* ── Extra darkening overlay for reading mode — fills viewport ── */
     .read-dim {
       position: fixed;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
+      left: 0;
+      width: 100vw;
       height: 100vh;
       z-index: 1;
       background: rgba(5, 8, 16, 0.84);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1s ease;
+      transition: opacity 2.0s ease;
     }
 
-    /* ── LED pixel overlay — fixed ── */
+    /* ── LED pixel overlay — fills viewport ── */
     .led-overlay {
       position: fixed;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
+      left: 0;
+      width: 100vw;
       height: 100vh;
       z-index: 2;
       background-image: radial-gradient(circle, transparent 76%, rgba(0,0,0,0.05) 76%);
       background-size: 10px 10px;
       pointer-events: none;
-      transition: opacity 0.8s ease;
+      transition: opacity 1.6s ease;
     }
 
     /* ════════════════════════════════════════
        LANDING SECTION
     ════════════════════════════════════════ */
     .landing-section {
-      position: relative;
+      position: sticky;
+      top: 0;
       height: 100vh;
-      overflow: hidden;
       z-index: 3;
+      transition: opacity 2s ease;
     }
 
     .overlay-top {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 3;
       background: linear-gradient(to bottom, rgba(5,8,16,0.4) 0%, rgba(5,8,16,0.05) 28%, transparent 55%);
       pointer-events: none;
     }
@@ -111,15 +113,29 @@
       z-index: 2;
       opacity: 0;
       animation: fadeIn 1.2s 0.5s ease forwards;
-      transition: opacity 0.7s ease;
+      /* opacity controlled by JS during transitions */
+      -webkit-mask-image:
+        linear-gradient(to top,   transparent 0%, black 20%),
+        linear-gradient(to right, transparent 0%, black 20%),
+        linear-gradient(to left,  transparent 0%, black 20%);
+      -webkit-mask-composite: destination-in, destination-in;
+      mask-image:
+        linear-gradient(to top,   transparent 0%, black 20%),
+        linear-gradient(to right, transparent 0%, black 20%),
+        linear-gradient(to left,  transparent 0%, black 20%);
+      mask-composite: intersect;
     }
 
     .overlay-bottom {
-      position: absolute;
-      inset: 0;
-      z-index: 3;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 5;
       background: linear-gradient(to top, rgba(5,8,16,0.97) 0%, rgba(5,8,16,0.88) 20%, rgba(5,8,16,0.55) 36%, rgba(5,8,16,0.2) 52%, transparent 66%);
       pointer-events: none;
+      transition: opacity 1.6s ease;
     }
 
     .quote-overlay {
@@ -127,7 +143,7 @@
       top: 22%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 4;
+      z-index: 6;
       width: 75%;
       text-align: center;
       font-size: clamp(0.9rem, 3vw, 1.05rem);
@@ -141,7 +157,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.18);
       opacity: 0;
       animation: fadeIn 1s 1.2s ease forwards;
-      transition: opacity 0.6s ease;
+      transition: opacity 1.6s ease;
       pointer-events: none;
     }
 
@@ -156,11 +172,11 @@
       margin-bottom: 0.4rem;
     }
 
-    .identifier {
+    .ratings {
       position: absolute;
       top: 4vh;
       left: 1.7rem;
-      z-index: 5;
+      z-index: 6;
       font-family: 'Space Mono', monospace;
       font-size: 0.62rem;
       letter-spacing: 0.14em;
@@ -169,7 +185,7 @@
       line-height: 1.8;
       opacity: 0;
       animation: fadeIn 1s 0.4s ease forwards;
-      transition: opacity 0.6s ease;
+      transition: opacity 1.6s ease;
     }
 
     /* Name / headline / location block */
@@ -178,9 +194,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 5;
+      z-index: 6;
       padding: 0 1.7rem calc(110px + env(safe-area-inset-bottom, 0px));
-      transition: opacity 0.6s ease;
+      transition: opacity 1.6s ease;
     }
 
     .eyebrow {
@@ -229,13 +245,9 @@
       color: rgba(255,255,255,0.55);
       opacity: 0;
       animation: fadeIn 1s 1.0s ease forwards;
-      transition: opacity 0.5s ease;
+      transition: opacity 1.6s ease;
     }
 
-    @keyframes bounceUp {
-      0%, 100% { transform: translateY(0); opacity: 0.28; }
-      50%       { transform: translateY(-6px); opacity: 0.6; }
-    }
 
     /* ════════════════════════════════════════
        FIXED PERSISTENT ELEMENTS
@@ -272,34 +284,50 @@
     .links-footer {
       position: fixed;
       bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      padding: 1rem 1.7rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+      left: 0;
+      width: 100vw;
       z-index: 10;
       background: linear-gradient(to top, rgba(5,8,16,0.95) 40%, transparent 100%);
       pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    /* Scroll hint inside footer — hidden in reading mode */
-    .links-footer .scroll-hint {
+    .links-footer-inner {
+      width: 100%;
+      max-width: 430px;
+      padding: 1rem 1.7rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ── Scroll hint: 3 chevrons, sequential runway fade ── */
+    @keyframes runwaySeq {
+      0%, 65%, 100% { opacity: 0.1; }
+      25%            { opacity: 0.85; }
+    }
+
+    .links-footer .chevron {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
       margin-bottom: 0.7rem;
       opacity: 1;
       transition: opacity 0.5s ease;
       pointer-events: none;
     }
 
-    .links-footer .scroll-hint svg {
-      width: 20px;
-      height: 20px;
-      color: rgba(255,255,255,0.28);
-      animation: bounceUp 2.2s 2s ease-in-out infinite;
+    .links-footer .chevron .chv {
+      display: block;
+      color: #fff;
+      overflow: visible;
     }
 
-    .is-reading .links-footer .scroll-hint {
+    .chv-1 { width: 26px; height: 14px; animation: runwaySeq 2.8s 0.0s  ease-in-out infinite; }
+    .chv-2 { width: 21px; height: 11px; animation: runwaySeq 2.8s 0.55s ease-in-out infinite; }
+    .chv-3 { width: 16px; height:  9px; animation: runwaySeq 2.8s 1.1s  ease-in-out infinite; }
+
+    .is-reading .links-footer .chevron {
       opacity: 0;
     }
 
@@ -311,8 +339,12 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       opacity: 0;
-      animation: fadeUp 0.8s 1.05s ease forwards;
+      transition: opacity 1.2s ease;
       pointer-events: all;
+    }
+
+    .has-scrolled .links {
+      opacity: 1;
     }
 
     .links::-webkit-scrollbar { display: none; }
@@ -352,21 +384,23 @@
       opacity: 0.7;
     }
 
-    /* Portrait mini — bottom left, appears in reading mode */
-    .portrait-mini {
+    /* Portrait morph — JS-driven FLIP animation */
+    .reading-portrait {
       position: fixed;
-      bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-      left: max(1rem, calc(50% - 215px + 1rem));
-      width: 56px;
-      height: 72px;
       object-fit: cover;
       object-position: top center;
       z-index: 8;
-      opacity: 0;
-      transform: scale(0.88);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      pointer-events: none;
       border-radius: 2px;
+      pointer-events: none;
+      opacity: 0;
+
+      /* CSS fallback / resting position in reading mode */
+      bottom: var(--safe-bottom);
+      left: max(0px, calc(50% - 215px));
+      width: 157px;
+      height: 202px;
+
+      /* No CSS transition — JS handles all animation */
     }
 
     /* Reading header — top, appears in reading mode */
@@ -382,7 +416,7 @@
       z-index: 9;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.6s ease;
+      transition: opacity 1s ease; /* fade-in duration */
     }
 
     .rh-eyebrow {
@@ -486,11 +520,11 @@
 
     .menu-close:hover { color: #fff; }
 
-    .menu-section {
+    .menu-content {
       margin-bottom: 1.1vh;
     }
 
-    .menu-section h3 {
+    .menu-content h3 {
       font-family: 'Space Mono', monospace;
       font-size: 0.6rem;
       letter-spacing: 0.2em;
@@ -501,7 +535,7 @@
       border-bottom: 1px solid rgba(100, 190, 255, 0.15);
     }
 
-    .menu-section p {
+    .menu-content p {
       font-family: 'Exo 2', sans-serif;
       font-size: 0.72rem;
       font-weight: 300;
@@ -510,7 +544,7 @@
       margin-bottom: 0.2rem;
     }
 
-    .menu-section a {
+    .menu-content a {
       color: rgba(100, 190, 255, 0.55);
       text-decoration: none;
     }
@@ -714,27 +748,9 @@
        SCROLL STATE TRANSITIONS
     ════════════════════════════════════════ */
 
-    /* Elements that fade OUT when reading */
-    .quote-overlay,
-    .identifier,
-    .location,
-    .scroll-hint,
-    .portrait,
-    .content,
-    .overlay-bottom,
-    .overlay-top {
-      transition: opacity 0.65s ease;
-    }
-
-    .is-reading .quote-overlay,
-    .is-reading .identifier,
-    .is-reading .location,
-    .is-reading .scroll-hint,
-    .is-reading .portrait,
-    .is-reading .content,
-    .is-reading .overlay-bottom,
-    .is-reading .overlay-top {
-      opacity: 0 !important;
+    /* Entire landing section fades as one unit */
+    .is-reading .landing-section {
+      opacity: 0;
       pointer-events: none;
     }
 
@@ -752,12 +768,11 @@
     .is-reading .reading-header {
       opacity: 1;
       pointer-events: all;
+      transition: opacity 1s ease; /* fade-out duration (used when is-reading is removed) */
     }
 
-    /* Portrait mini fades in */
-    .is-reading .portrait-mini {
-      opacity: 1;
-      transform: scale(1);
+    /* Portrait morph — opacity & pointer-events managed by JS */
+    .is-reading .reading-portrait {
       pointer-events: all;
     }
 
@@ -770,9 +785,57 @@
       from { opacity: 0; }
       to   { opacity: 1; }
     }
+
+    /* ════════════════════════════════════════
+       PHONE LANDSCAPE — rotate hint
+    ════════════════════════════════════════ */
+    @media (orientation: landscape) and (max-height: 500px) {
+      .app        { visibility: hidden; }
+      .rotate-hint { display: flex; }
+    }
+
+    .rotate-hint {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #050810;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+    }
+
+    .rotate-hint svg {
+      width: 44px;
+      height: 44px;
+      color: rgba(100, 190, 255, 0.55);
+      animation: rotatePhone 2.5s ease-in-out infinite;
+    }
+
+    .rotate-hint p {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    @keyframes rotatePhone {
+      0%, 40%  { transform: rotate(0deg); }
+      60%, 100% { transform: rotate(90deg); }
+    }
   </style>
 </head>
 <body>
+
+<!-- Rotate hint — shown on phones in landscape -->
+<div class="rotate-hint">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5"/>
+    <path stroke-linecap="round" stroke-linejoin="round" d="M20 9a8 8 0 0 0-14.93-2M4 15a8 8 0 0 0 14.93 2"/>
+  </svg>
+</div>
 
 <div class="app">
 
@@ -782,7 +845,6 @@
       <source src="bg.mp4" type="video/mp4" />
     </video>
   </div>
-
   <!-- ── Reading dim overlay ── -->
   <div class="read-dim"></div>
 
@@ -800,7 +862,7 @@
 
     <div class="overlay-bottom"></div>
 
-    <p class="identifier">CPL(A) &nbsp;|&nbsp; A320 COP/IR &nbsp;|&nbsp; SEP (L) PIC<br>FI(A) rp &nbsp;|&nbsp; PPL SE SP night</p>
+    <p class="ratings">CPL(A) &nbsp;|&nbsp; A320 COP/IR &nbsp;|&nbsp; SEP (L) PIC<br>FI(A) rp &nbsp;|&nbsp; PPL SE SP night</p>
 
     <p class="quote-overlay">A good pilot is always learning.</p>
 
@@ -899,8 +961,8 @@
     <span></span><span></span><span></span>
   </button>
 
-  <!-- Portrait mini — bottom left, reading mode -->
-  <img class="portrait-mini" src="Portrait_cut.png" alt="Denny Rambow" />
+  <!-- Portrait morph — shrinks from full to mini on scroll -->
+  <img class="reading-portrait" src="Portrait_cut.png" alt="Denny Rambow" />
 
   <!-- Reading header — top, reading mode -->
   <div class="reading-header">
@@ -911,8 +973,15 @@
 
   <!-- Links footer — always bottom -->
   <div class="links-footer">
-    <div class="scroll-hint">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+  <div class="links-footer-inner">
+    <div class="chevron">
+      <svg class="chv chv-3" viewBox="3 7 18 10" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+      </svg>
+      <svg class="chv chv-2" viewBox="3 7 18 10" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+      </svg>
+      <svg class="chv chv-1" viewBox="3 7 18 10" fill="none" stroke="currentColor" stroke-width="1.8">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
       </svg>
     </div>
@@ -948,6 +1017,7 @@
 
     </div>
   </div>
+  </div>
 
   <!-- ══════════════════════════════════════
        MENU OVERLAY
@@ -958,24 +1028,24 @@
       <button class="menu-close" id="menuClose">&#x2715;</button>
     </div>
 
-    <div class="menu-section">
+    <div class="menu-content">
       <h3>Impressum</h3>
       <p>Angaben gemäß § 5 TMG &amp; § 18 Abs. 2 MStV</p>
       <p>Denny Rambow<br>Beusselstraße 42, 10553 Berlin<br><a href="mailto:mail@dennyrambow.de">mail@dennyrambow.de</a></p>
     </div>
 
-    <div class="menu-section">
+    <div class="menu-content">
       <h3>Datenschutz</h3>
       <p>Diese Website erhebt keine personenbezogenen Daten, verwendet keine Cookies und kein Tracking. Beim Aufruf werden technische Zugriffsdaten (IP-Adresse, Zeitstempel, Browsertyp) vom Hosting-Provider in Server-Logfiles gespeichert und nach 7 Tagen automatisch gelöscht. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
       <p>Verantwortlicher gem. Art. 4 Abs. 7 DSGVO: Denny Rambow, Berlin. Auskunft, Berichtigung &amp; Löschung (Art. 15–17 DSGVO) auf Anfrage per E-Mail.</p>
     </div>
 
-    <div class="menu-section">
+    <div class="menu-content">
       <h3>Haftungsausschluss</h3>
       <p>Die Inhalte wurden mit größtmöglicher Sorgfalt erstellt. Für Richtigkeit, Vollständigkeit und Aktualität wird gemäß § 7 Abs. 1 TMG Verantwortung übernommen. Für verlinkte externe Seiten ist der jeweilige Anbieter verantwortlich — zum Zeitpunkt der Verlinkung waren keine rechtswidrigen Inhalte erkennbar.</p>
     </div>
 
-    <div class="menu-section">
+    <div class="menu-content">
       <h3>Connect</h3>
       <div class="menu-socials">
         <a href="https://www.linkedin.com/in/denny-rambow-99b925121/" target="_blank" rel="noopener" aria-label="LinkedIn" style="color:#0A66C2">
@@ -996,7 +1066,7 @@
       </div>
     </div>
 
-    <div class="menu-section">
+    <div class="menu-content">
       <h3>Work</h3>
       <a class="menu-work-link" href="https://fat.aero" target="_blank" rel="noopener">
         <span class="menu-work-title">fat.aero</span>
@@ -1032,21 +1102,110 @@
     }, { once: true });
   }
 
-  // ── Scroll-driven landing → reading transition ──
-  const THRESHOLD = 80;
-  let ticking = false;
+  // ── Portrait FLIP animation ────────────────────────────────────────
+  const portraitLand  = document.querySelector('.portrait');
+  const portraitMorph = document.querySelector('.reading-portrait');
 
-  function handleScroll() {
+  const MINI_W = 157, MINI_H = 202;
+  const EASE   = 'cubic-bezier(0.4, 0, 0.2, 1)';
+  const DUR    = 1300; // ms
+
+  let isReading = false;
+  let morphTimer = null;
+
+  function getSafeBottom() {
+    return parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--safe-bottom')) || 0;
+  }
+
+  function getMiniRect() {
+    const safeB  = getSafeBottom();
+    const appW   = document.querySelector('.app').offsetWidth;
+    const left   = Math.max(0, (window.innerWidth - appW) / 2);
+    const top    = window.innerHeight - MINI_H - safeB;
+    return { left, top, width: MINI_W, height: MINI_H };
+  }
+
+  function applyStyle(el, props) {
+    Object.assign(el.style, props);
+  }
+
+  function enterReading() {
+    if (isReading) return;
+    isReading = true;
+    clearTimeout(morphTimer);
+
+    // 1. Snapshot where the landing portrait is right now
+    const from = portraitLand.getBoundingClientRect();
+    const to   = getMiniRect();
+
+    // 2. Snap morph exactly over the landing portrait (instant, no transition)
+    applyStyle(portraitMorph, {
+      transition: 'none',
+      top:    from.top    + 'px',
+      left:   from.left   + 'px',
+      bottom: 'auto',
+      width:  from.width  + 'px',
+      height: from.height + 'px',
+      opacity: '0',
+    });
+
+    // 3. Fade out entire landing section (CSS transition handles it)
+    document.body.classList.add('is-reading');
+
+    // 4. Double-rAF: let browser paint the snap, then fly to mini
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const d = (DUR / 1000) + 's';
+      applyStyle(portraitMorph, {
+        transition: `top ${d} ${EASE}, left ${d} ${EASE}, width ${d} ${EASE}, height ${d} ${EASE}, opacity 5s ease`,
+        top:    to.top    + 'px',
+        left:   to.left   + 'px',
+        width:  to.width  + 'px',
+        height: to.height + 'px',
+        opacity: '1',
+      });
+
+      // After flight: clean up inline transition (keep position)
+      morphTimer = setTimeout(() => {
+        portraitMorph.style.transition = '';
+      }, DUR + 50);
+    }));
+  }
+
+  function exitReading() {
+    if (!isReading) return;
+    isReading = false;
+    clearTimeout(morphTimer);
+
+    document.body.classList.remove('is-reading');
+
+    // Fade out morph
+    applyStyle(portraitMorph, { transition: 'opacity 0.7s ease', opacity: '0' });
+
+    // CSS transition restores landing section opacity automatically
+
+    // Clean up morph after fade completes
+    morphTimer = setTimeout(() => {
+      portraitMorph.style.cssText = '';
+    }, 800);
+  }
+
+  // ── Scroll listener ──────────────────────────────────────────────
+  const THRESHOLD = 80;
+  let   ticking   = false;
+
+  window.addEventListener('scroll', () => {
     if (!ticking) {
       requestAnimationFrame(() => {
-        document.body.classList.toggle('is-reading', window.scrollY > THRESHOLD);
+        const past = window.scrollY > THRESHOLD;
+        if (past  && !isReading) enterReading();
+        if (!past &&  isReading) exitReading();
+        if (window.scrollY > 10) document.body.classList.add('has-scrolled');
         ticking = false;
       });
       ticking = true;
     }
-  }
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  }, { passive: true });
 </script>
 
 </body>
