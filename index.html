@@ -125,9 +125,10 @@
     }
 
     .portrait-wrap {
-      position: absolute;
+      position: fixed;
       bottom: 18vh;
-      left: -15%;
+      left: max(0px, calc((100vw - min(100vw, 430px)) / 2));
+      transform: translateX(-15%);
       height: 49vh;
       width: auto;
       z-index: 2;
