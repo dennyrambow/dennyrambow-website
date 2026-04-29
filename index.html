@@ -752,6 +752,32 @@
       text-align: left;
     }
 
+    .ratings {
+      display: flex !important;
+      align-items: center;
+      gap: 0.7em;
+    }
+
+    .ratings-icon {
+      flex-shrink: 0;
+      width: 2.2em;
+      height: 2.2em;
+      color: rgba(100, 190, 255, 0.70);
+    }
+
+    .ratings-text {
+      line-height: 1.8;
+    }
+
+
+    .cv-masthead-compass {
+      display: block;
+      width: 22px;
+      height: 22px;
+      color: rgba(100, 190, 255, 0.55);
+      margin-bottom: 0.9rem;
+    }
+
     .cv-masthead-eyebrow {
       font-family: 'Space Mono', monospace;
       font-size: 0.58rem;
@@ -794,7 +820,7 @@
       color: rgba(255,255,255,0.72);
     }
 
-    .cv-intro p::first-letter {
+    .cv-intro p:first-child::first-letter {
       font-size: 3.4rem;
       font-weight: 700;
       line-height: 0.72;
@@ -866,6 +892,7 @@
       line-height: 1.8;
       text-align: justify;
       color: rgba(255,255,255,0.72);
+      margin-bottom: 1rem;
     }
 
     /* Section break */
@@ -1154,7 +1181,10 @@
 
     <div class="overlay-bottom"></div>
 
-    <p class="ratings">CPL(A) &nbsp;|&nbsp; A320 COP/IR &nbsp;|&nbsp; SEP (L) PIC<br>FI(A) rp &nbsp;|&nbsp; PPL SE SP night</p>
+    <p class="ratings">
+      <svg class="ratings-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+      <span class="ratings-text">CPL(A) &nbsp;|&nbsp; A320 COP/IR &nbsp;|&nbsp; SEP (L) PIC<br>FI(A) rp &nbsp;|&nbsp; PPL SE SP night</span>
+    </p>
 
     <p class="quote-overlay">A good pilot is always learning.</p>
 
@@ -1173,6 +1203,16 @@
   <section class="reading-section">
 
     <div class="cv-masthead">
+      <svg class="cv-masthead-compass" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
+        <polygon points="12,3.5 13.5,12 12,10.8 10.5,12" fill="currentColor"/>
+        <polygon points="12,20.5 13.5,12 12,13.2 10.5,12" fill="currentColor" opacity="0.35"/>
+        <line x1="12" y1="2" x2="12" y2="3.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="12" y1="20.8" x2="12" y2="22" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="2" y1="12" x2="3.2" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="20.8" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
       <span class="cv-masthead-eyebrow">Personal Log · Denny Rambow</span>
       <h2 class="cv-masthead-title">My Story</h2>
       <div class="cv-masthead-rule"></div>
@@ -1191,7 +1231,9 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Restless Curiosity</h4>
-        <p>After my German A-levels, I trained as a paramedic — a world of fast decisions and real human connection, where steadiness under pressure is not optional. But one calling was never enough. Theatre, acting, television and film productions: from an early age, I had a natural pull toward the stage and the energy of a live audience. I was self-employed in entertainment for years — presenting, performing, making people feel something. In between: web design, music production, always another project. That performer's instinct — the ability to read a room, to hold attention, to bring people along — would shape far more than I knew.</p>
+        <p>After my German A-levels, I trained as a paramedic — a world of fast decisions and real human connection, where steadiness under pressure is not optional.</p>
+        <p>But one calling was never enough. Theatre, acting, television and film productions: from an early age, I had a natural pull toward the stage and the energy of a live audience. I was self-employed in entertainment for years — presenting, performing, making people feel something. In between: web design, music production, always another project.</p>
+        <p>That performer's instinct — the ability to read a room, to hold attention, to bring people along — would shape far more than I knew.</p>
       </div>
     </div>
 
@@ -1200,7 +1242,9 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>A Ship, a Winter, a Question</h4>
-        <p>At the end of 2010, I was working as moderator and entertainment expert on a cruise ship. But behind the show, things were falling apart. Collaborations that were supposed to open big doors had collapsed. My moderation career had hit a wall. And a love that had once pushed me toward a new life in America fell apart too. A dark winter — one of those seasons where you don't just question your next step. You question the whole direction. Then a friend asked a quiet question: have you ever thought about applying to Lufthansa as a flight attendant? The A380 was joining the fleet. There was real demand. That one question changed everything.</p>
+        <p>At the end of 2010, I was working as moderator and entertainment expert on a cruise ship. But behind the show, things were falling apart. Collaborations that were supposed to open big doors had collapsed. My moderation career had hit a wall. And a love that had once pushed me toward a new life in America fell apart too.</p>
+        <p>A dark winter — one of those seasons where you don't just question your next step. You question the whole direction.</p>
+        <p>Then a friend asked a quiet question: have you ever thought about applying to Lufthansa as a flight attendant? The A380 was joining the fleet. There was real demand. That one question changed everything.</p>
       </div>
     </div>
 
@@ -1209,7 +1253,10 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Entry into Aviation</h4>
-        <p>I joined Deutsche Lufthansa as a flight attendant — and it became one of the richest chapters of my life. Service had always been a natural strength: the attentiveness, the instinct to make people feel genuinely welcomed and well looked after. In the cabin, that fit like a glove. But it was more than a job. I saw the world, built friendships that still matter, and collected experiences I'd recommend to anyone. Over more than 4,200 hours, whenever the opportunity arose, I made my way to the front of the aircraft. Into the cockpit. I sat behind the pilots and watched — especially during takeoff and landing, those moments of pure focus and quiet precision. And somewhere between admiration and something harder to name, one question kept coming back: Could I be one of them? The honest answer took years to form. But eventually, it became clear.</p>
+        <p>I joined Deutsche Lufthansa as a flight attendant — and it became one of the richest chapters of my life. Service had always been a natural strength: the attentiveness, the instinct to make people feel genuinely welcomed and well looked after. In the cabin, that fit like a glove.</p>
+        <p>But it was more than a job. I saw the world, built friendships that still matter, and collected experiences I'd recommend to anyone.</p>
+        <p>Over more than 4,200 hours, whenever the opportunity arose, I made my way to the front of the aircraft. Into the cockpit. I sat behind the pilots and watched — especially during takeoff and landing, those moments of pure focus and quiet precision.</p>
+        <p>And somewhere between admiration and something harder to name, one question kept coming back: Could I be one of them? The honest answer took years to form. But eventually, it became clear.</p>
       </div>
     </div>
 
@@ -1222,7 +1269,9 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>The DLR Test. Hamburg.</h4>
-        <p>In 2014, I took the leap — and applied to Lufthansa's pilot selection programme. The DLR aptitude test in Hamburg is one of the most demanding in the industry. I passed it. That result changed something in me: this was no longer just a dream — it was a proven capability. Ambition took hold for good. But the selection process is a long one, and my unconventional background gave some interviewers pause in the assessments that followed. Again and again, the answer was no. Each one hurt. But none of them ended the dream.</p>
+        <p>In 2014, I took the leap — and applied to Lufthansa's pilot selection programme. The DLR aptitude test in Hamburg is one of the most demanding in the industry. I passed it.</p>
+        <p>That result changed something in me: this was no longer just a dream — it was a proven capability. Ambition took hold for good.</p>
+        <p>But the selection process is a long one, and my unconventional background gave some interviewers pause in the assessments that followed. Again and again, the answer was no. Each one hurt. But none of them ended the dream.</p>
       </div>
     </div>
 
@@ -1235,7 +1284,8 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Cleared for Training</h4>
-        <p>In 2018, the door finally opened. I began my integrated ATPL(A) training at Lufthansa Aviation Training — full-time, all-in. CPL · IR · MEP · MCC · UPRT. ATPL theory at 93%. Years of waiting had not dulled my edge — if anything, they had sharpened it. I showed up to every lesson knowing exactly why I was there. After years of waiting, the goal was finally within reach.</p>
+        <p>In 2018, the door finally opened. I began my integrated ATPL(A) training at Lufthansa Aviation Training — full-time, all-in. CPL · IR · MEP · MCC · UPRT. ATPL theory at 93%.</p>
+        <p>Years of waiting had not dulled my edge — if anything, they had sharpened it. I showed up to every lesson knowing exactly why I was there. After years of waiting, the goal was finally within reach.</p>
       </div>
     </div>
 
@@ -1244,7 +1294,9 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Snowstorm. Then: Build.</h4>
-        <p>Training complete. Licences in hand. Then COVID-19 hit — and almost overnight, the aviation industry stopped. For many of us, it felt unreal. The finish line was right there, and suddenly the race was on hold. No clear timeline. No guarantee. But I had learned something by then: if you can't move forward, you build. I qualified as a certified Flight Instructor. I began my Bachelor's degree in Aviation Business at HTW Saar. The dream didn't disappear. It simply had to wait a little longer.</p>
+        <p>Training complete. Licences in hand. Then COVID-19 hit — and almost overnight, the aviation industry stopped. For many of us, it felt unreal. The finish line was right there, and suddenly the race was on hold. No clear timeline. No guarantee.</p>
+        <p>But I had learned something by then: if you can't move forward, you build. I qualified as a certified Flight Instructor. I began my Bachelor's degree in Aviation Business at HTW Saar.</p>
+        <p>The dream didn't disappear. It simply had to wait a little longer.</p>
       </div>
     </div>
 
@@ -1257,7 +1309,10 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Cleared for Takeoff</h4>
-        <p>In February 2022, I began type rating training with Eurowings Deutschland. Simulator sessions. Procedures. Long days and steep learning curves — and finally, the feeling that everything I had worked for was becoming real. Nine years after my first application. Thirty-six years old. On December 2nd, 2022, I flew my first four flights with passengers in the right seat of an Airbus A320. Seventy tonnes of aircraft. A full cabin. And a day I will never forget. I thought of every long wait, every interview that had ended with no, every restart, every moment where giving up would have been easier. Not loudly. Not dramatically. Just deeply, quietly proud. What followed showed me that none of my previous chapters had been wasted: panel moderations with industry leaders — where everything I had first learned on stage found its place in aviation too; work with Diversifly, supporting more diversity in aviation; radio interviews; a thesis on AI in airline operations. The route had never been straight. But it had made sense all along.</p>
+        <p>In February 2022, I began type rating training with Eurowings Deutschland. Simulator sessions. Procedures. Long days and steep learning curves — and finally, the feeling that everything I had worked for was becoming real.</p>
+        <p>Nine years after my first application. Thirty-six years old. On December 2nd, 2022, I flew my first four flights with passengers in the right seat of an Airbus A320. Seventy tonnes of aircraft. A full cabin. And a day I will never forget.</p>
+        <p>I thought of every long wait, every interview that had ended with no, every restart, every moment where giving up would have been easier. Not loudly. Not dramatically. Just deeply, quietly proud.</p>
+        <p>What followed showed me that none of my previous chapters had been wasted: panel moderations with industry leaders — where everything I had first learned on stage found its place in aviation too; work with Diversifly, supporting more diversity in aviation; radio interviews; a thesis on AI in airline operations. The route had never been straight. But it had made sense all along.</p>
       </div>
     </div>
 
@@ -1266,7 +1321,9 @@
       <div class="cv-timeline-line"></div>
       <div class="cv-body">
         <h4>Still Flying. Still Learning.</h4>
-        <p>A few thousand flight hours into life as a First Officer on the Airbus A320 family — and still learning with every sector. Certified Flight Instructor, still mentoring the next generation. B.Sc. Aviation Business, thesis on AI in airline operations. The paramedic who became a host, the flight attendant who became a pilot, the student who became the teacher — each chapter made the next one possible. The journey is far from over. And I wouldn't have it any other way.</p>
+        <p>A few thousand flight hours into life as a First Officer on the Airbus A320 family — and still learning with every sector. Certified Flight Instructor, still mentoring the next generation. B.Sc. Aviation Business, thesis on AI in airline operations.</p>
+        <p>The paramedic who became a host, the flight attendant who became a pilot, the student who became the teacher — each chapter made the next one possible.</p>
+        <p>The journey is far from over. And I wouldn't have it any other way.</p>
       </div>
     </div>
 
