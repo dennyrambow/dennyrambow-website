@@ -64,7 +64,7 @@
       background: rgba(5, 8, 16, 0.84);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 2.0s ease;
+      transition: opacity 1.1s ease;
     }
 
     /* ── LED pixel overlay — fills viewport ── */
@@ -78,7 +78,7 @@
       background-image: radial-gradient(circle, transparent 76%, rgba(0,0,0,0.05) 76%);
       background-size: 10px 10px;
       pointer-events: none;
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
     }
 
     /* ════════════════════════════════════════
@@ -89,7 +89,7 @@
       top: 0;
       height: 100vh;
       z-index: 3;
-      transition: opacity 2s ease;
+      transition: opacity 1.1s ease;
     }
 
     .overlay-top {
@@ -126,8 +126,8 @@
 
     .portrait-wrap {
       position: absolute;
-      bottom: 13vh;
-      left: -20%;
+      bottom: 18vh;
+      left: -15%;
       height: 49vh;
       width: auto;
       z-index: 2;
@@ -152,7 +152,7 @@
       z-index: 5;
       background: linear-gradient(to top, rgba(5,8,16,0.97) 0%, rgba(5,8,16,0.88) 20%, rgba(5,8,16,0.55) 36%, rgba(5,8,16,0.2) 52%, transparent 66%);
       pointer-events: none;
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
     }
 
     .quote-overlay {
@@ -174,7 +174,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.18);
       opacity: 0;
       animation: fadeIn 1s 1.2s ease forwards;
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
       pointer-events: none;
     }
 
@@ -201,7 +201,7 @@
       line-height: 1.8;
       opacity: 0;
       animation: fadeIn 1s 0.4s ease forwards;
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
     }
 
     /* Name / headline / location block */
@@ -212,7 +212,7 @@
       right: 0;
       z-index: 6;
       padding: 0 1.7rem calc(110px + env(safe-area-inset-bottom, 0px));
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
     }
 
     .eyebrow {
@@ -261,7 +261,7 @@
       color: rgba(255,255,255,0.55);
       opacity: 0;
       animation: fadeIn 1s 1.0s ease forwards;
-      transition: opacity 1.6s ease;
+      transition: opacity 1.1s ease;
     }
 
 
@@ -296,13 +296,13 @@
 
     .burger:hover span { background: rgba(255,255,255,0.85); }
 
-    /* Bottom gradient — full viewport width, reading mode only */
+/* Bottom gradient — full viewport width, reading mode only */
     .bottom-overlay-bg {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100vw;
-      height: 22vh;
+      height: 27vh;
       background: linear-gradient(to top, rgba(5,8,16,1) 30%, transparent 100%);
       z-index: 9;
       pointer-events: none;
@@ -402,6 +402,17 @@
       max-height: 80px;
       pointer-events: all;
     }
+
+    /* Buttons hidden individually, staggered fade-in */
+    .links-footer .links .efis-btn {
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+
+    .buttons-ready .links .efis-btn:nth-child(1) { opacity: 1; transition-delay: 0.0s; }
+    .buttons-ready .links .efis-btn:nth-child(2) { opacity: 1; transition-delay: 0.3s; }
+    .buttons-ready .links .efis-btn:nth-child(3) { opacity: 1; transition-delay: 0.6s; }
+    .buttons-ready .links .efis-btn:nth-child(4) { opacity: 1; transition-delay: 0.9s; }
 
     .links::-webkit-scrollbar { display: none; }
 
@@ -731,7 +742,43 @@
     .reading-section {
       position: relative;
       z-index: 3;
-      padding: 9vh 1.7rem calc(15vh + env(safe-area-inset-bottom, 0px));
+      opacity: 0;
+      padding: 15vh 1.7rem calc(15vh + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ── Reading section masthead ── */
+    .cv-masthead {
+      margin-bottom: 3.6rem;
+      text-align: left;
+    }
+
+    .cv-masthead-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.30em;
+      text-transform: uppercase;
+      color: rgba(100, 190, 255, 0.50);
+      display: block;
+      margin-bottom: 0.7rem;
+    }
+
+    .cv-masthead-title {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.6rem, 7vw, 2.2rem);
+      font-weight: normal;
+      letter-spacing: 0.04em;
+      color: rgba(100, 190, 255, 0.92);
+      text-shadow:
+        0 0 18px rgba(100, 190, 255, 0.35),
+        0 0 48px rgba(100, 190, 255, 0.12);
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+
+    .cv-masthead-rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, rgba(100,190,255,0.45) 0%, rgba(100,190,255,0.08) 100%);
     }
 
     /* Intro drop-cap paragraph */
@@ -771,7 +818,7 @@
 
     .cv-year span {
       font-family: 'Space Mono', monospace;
-      font-size: 0.52rem;
+      font-size: 0.72rem;
       letter-spacing: 0.08em;
       color: rgba(100, 190, 255, 0.60);
       display: block;
@@ -805,7 +852,7 @@
 
     .cv-body h4 {
       font-family: 'Space Mono', monospace;
-      font-size: 0.52rem;
+      font-size: 0.72rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: rgba(100, 190, 255, 0.60);
@@ -831,10 +878,10 @@
 
     .cv-chapter span {
       font-family: 'Space Mono', monospace;
-      font-size: 0.52rem;
+      font-size: 0.68rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(100, 190, 255, 0.35);
+      color: rgba(100, 190, 255, 0.75);
       white-space: nowrap;
     }
 
@@ -843,7 +890,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: rgba(100, 190, 255, 0.12);
+      background: rgba(100, 190, 255, 0.35);
     }
 
     /* Pull quote after intro */
@@ -908,32 +955,33 @@
       text-align: center;
     }
 
-    /* The actual quote — centered */
+    /* The actual quote — mirrors landing page quote-overlay exactly */
     .cv-quote {
-      font-size: 0.95rem;
+      font-size: clamp(0.9rem, 3vw, 1.05rem);
       font-style: italic;
-      font-weight: 300;
+      font-weight: 400;
       color: rgba(255,255,255,0.50);
-      line-height: 1.7;
-      letter-spacing: 0.02em;
+      line-height: 1.6;
+      letter-spacing: 0.03em;
       text-align: center;
+      padding: 0.9rem 0;
+      margin: 1.4rem 0 2rem;
     }
 
     .cv-quote::before {
       content: '\201C';
-      font-size: 2.2rem;
-      line-height: 0.5;
-      color: rgba(100,190,255,0.25);
       display: block;
-      margin-bottom: -0.3rem;
-      text-align: center;
+      font-size: 3.2rem;
+      line-height: 0.6;
+      font-style: normal;
+      color: rgba(100,190,255,0.25);
+      margin-bottom: -0.4rem;
     }
 
     /* Sign-off block — SVG right-aligned, text above the "R" */
     .cv-signature {
       margin-top: 1.8rem;
       padding-top: 1.4rem;
-      border-top: 1px solid rgba(255,255,255,0.07);
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -974,6 +1022,11 @@
       display: block;
     }
 
+    .cv-signature-svg path {
+      stroke: rgba(100,190,255,1);
+      stroke-width: 4.5;
+    }
+
     /* ════════════════════════════════════════
        SCROLL STATE TRANSITIONS
     ════════════════════════════════════════ */
@@ -992,6 +1045,11 @@
     /* Extra dim fades in */
     .is-reading .read-dim {
       opacity: 1;
+    }
+
+    /* Reading section content fades in */
+    .is-reading .reading-section {
+      animation: fadeIn 3s ease forwards;
     }
 
     /* Reading header fades in */
@@ -1114,6 +1172,12 @@
   ══════════════════════════════════════ -->
   <section class="reading-section">
 
+    <div class="cv-masthead">
+      <span class="cv-masthead-eyebrow">Personal Log · Denny Rambow</span>
+      <h2 class="cv-masthead-title">My Story</h2>
+      <div class="cv-masthead-rule"></div>
+    </div>
+
     <div class="cv-intro">
       <p>Some dreams don't arrive on schedule. Mine took nine years, a global pandemic, and more closed doors than I care to count — before I finally found myself in the right seat of an Airbus A320, cleared for takeoff. This is my story. Not a straight line — but mine, and I wouldn't trade a single detour. Because through all of it — through every setback and every restart — one thing never changed. And it's the same thing I'd tell anyone on a similar road: <em>"Never give up."</em></p>
     </div>
@@ -1207,7 +1271,7 @@
     </div>
 
     <div class="cv-closing">
-      <p class="cv-encouragement">I know there are paths into the cockpit that move faster than mine did. And I know there are paths that are steeper, longer, harder — colleagues who face obstacles I never had to face. This is just one story. But if any part of it speaks to you — if you are standing on a long runway of your own, wondering whether to keep going — I want you to know: it is worth it. Not because every dream comes true exactly as planned. But because becoming the person who keeps going may be the most important part of the journey. <strong>Never give up.</strong></p>
+      <p class="cv-encouragement">Faster paths exist. Harder ones, too. This is just one story — but if you're standing on a long runway of your own, wondering whether to keep going: <strong>Never give up.</strong></p>
       <p class="cv-preamble">So always remember:</p>
       <p class="cv-quote">A good pilot is always learning.</p>
       <div class="cv-signature">
@@ -1444,7 +1508,7 @@
     clearTimeout(btnReadyTimer);
     btnReadyTimer = setTimeout(() => {
       document.body.classList.add('buttons-ready');
-    }, DUR + 400);
+    }, DUR + 1400);
 
     // 1. Snapshot where the landing portrait is right now
     const from = portraitLand.getBoundingClientRect();
@@ -1468,7 +1532,7 @@
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const d = (DUR / 1000) + 's';
       applyStyle(portraitMorph, {
-        transition: `top ${d} ${EASE}, left ${d} ${EASE}, width ${d} ${EASE}, height ${d} ${EASE}, opacity 5s ease`,
+        transition: `top ${d} ${EASE}, left ${d} ${EASE}, width ${d} ${EASE}, height ${d} ${EASE}, opacity 1.5s ease`,
         top:    to.top    + 'px',
         left:   to.left   + 'px',
         width:  to.width  + 'px',
