@@ -328,10 +328,45 @@
       align-items: center;
     }
 
+    .ptt-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.48rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(100, 190, 255, 0.35);
+      margin-bottom: 0.4rem;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+
+    .ptt-label::before {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(100, 190, 255, 0.35);
+    }
+
+    .buttons-ready .ptt-label {
+      opacity: 1;
+    }
+
+    .buttons-ready .links-footer-inner {
+      opacity: 1;
+    }
+
     .links-footer-inner {
       width: 100%;
       max-width: 430px;
       padding: 0.6rem 1.7rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
+      background-image: linear-gradient(to right, transparent 165px, rgba(100,190,255,0.18) 165px, rgba(100,190,255,0.18) calc(100% - 1.7rem), transparent calc(100% - 1.7rem));
+      background-size: 100% 1px;
+      background-repeat: no-repeat;
+      background-position: top;
+      opacity: 0;
+      transition: opacity 0.7s ease;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -1382,6 +1417,7 @@
   <!-- Links footer — always bottom -->
   <div class="links-footer">
   <div class="links-footer-inner">
+    <p class="ptt-label">PUSH TO TALK</p>
     <div class="links">
 
       <!-- LinkedIn -->
@@ -1613,6 +1649,9 @@
     document.body.classList.remove('is-reading');
     document.body.classList.remove('buttons-ready');
 
+    // Reset any lit button when leaving reading mode
+    if (window.efisResetAll) window.efisResetAll();
+
     // Fade out morph
     applyStyle(portraitMorph, { transition: 'opacity 0.7s ease', opacity: '0' });
 
@@ -1710,20 +1749,8 @@
     observer.observe(sigSvg);
   })();
 
-  // ── EFIS Button: arm → countdown → launch ─────────────────────────────
+  // ── EFIS Button: tap → instant launch + ring confirmation ────────────
   (function () {
-    let activeBtn   = null;
-    let activeTimer = null;
-
-    function efisReset(btn) {
-      clearTimeout(activeTimer);
-      btn.classList.remove('armed');
-      const ring = btn.querySelector('.efis-ring rect');
-      if (ring) { ring.style.transition = 'none'; ring.style.strokeDashoffset = '222'; }
-      activeBtn   = null;
-      activeTimer = null;
-    }
-
     // iOS: bind touchend directly for instant response
     document.querySelectorAll('.efis-btn').forEach(btn => {
       btn.addEventListener('touchend', function (e) {
@@ -1732,35 +1759,50 @@
       }, { passive: false });
     });
 
+    let lastBtn = null;
+
+    function resetBtn(btn) {
+      btn.classList.remove('armed');
+      const r = btn.querySelector('.efis-ring rect');
+      if (r) { r.style.transition = 'none'; r.style.strokeDashoffset = '222'; r.style.opacity = '1'; }
+    }
+
+    window.efisResetAll = function () {
+      if (lastBtn) { resetBtn(lastBtn); lastBtn = null; }
+    };
+
     window.efisArm = function (btn) {
       const url = btn.dataset.href;
       if (!url) return;
 
-      // Second tap on same button → cancel
-      if (activeBtn === btn) { efisReset(btn); return; }
+      // Open immediately — synchronous with tap, Safari won't block this
+      if (url.startsWith('mailto:')) {
+        window.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener');
+      }
 
-      // Cancel any previously armed button
-      if (activeBtn) efisReset(activeBtn);
+      // Remove green from previously lit button
+      if (lastBtn && lastBtn !== btn) { resetBtn(lastBtn); }
 
-      activeBtn = btn;
+      // Light up this button — stays green
+      lastBtn = btn;
       btn.classList.add('armed');
-
-      // Animate ring
       const ring = btn.querySelector('.efis-ring rect');
       if (ring) {
         ring.style.transition = 'none';
         ring.style.strokeDashoffset = '222';
+        ring.style.opacity = '1';
         requestAnimationFrame(() => requestAnimationFrame(() => {
-          ring.style.transition = 'stroke-dashoffset 2s linear';
+          ring.style.transition = 'stroke-dashoffset 0.6s ease';
           ring.style.strokeDashoffset = '0';
+          // After ring completes, fade it out — LED stays green
+          setTimeout(() => {
+            ring.style.transition = 'opacity 0.4s ease';
+            ring.style.opacity = '0';
+          }, 650);
         }));
       }
-
-      activeTimer = setTimeout(() => {
-        efisReset(btn);
-        if (url.startsWith('mailto:')) { window.location.href = url; }
-        else { window.open(url, '_blank', 'noopener'); }
-      }, 2000);
     };
   })();
 </script>
