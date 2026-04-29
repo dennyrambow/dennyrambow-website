@@ -303,7 +303,7 @@
       bottom: 0;
       left: 0;
       width: 100vw;
-      height: 48vh;
+      height: 38vh;
       background: linear-gradient(to top, rgba(5,8,16,1) 40%, transparent 100%);
       z-index: 9;
       pointer-events: none;
@@ -332,7 +332,7 @@
     .links-footer-inner {
       width: 100%;
       max-width: 430px;
-      padding: 1rem 1.7rem calc(1.4rem + env(safe-area-inset-bottom, 0px));
+      padding: 0.6rem 1.7rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -378,6 +378,10 @@
 
     .is-reading .links-footer .chevron {
       opacity: 0;
+      max-height: 0;
+      margin: 0;
+      overflow: hidden;
+      transition: opacity 0.3s ease, max-height 0.4s ease, margin 0.4s ease;
     }
 
     .links {
@@ -394,7 +398,7 @@
       pointer-events: none;
     }
 
-    .has-scrolled .links {
+    .buttons-ready .links {
       opacity: 1;
       max-height: 80px;
       pointer-events: all;
@@ -420,6 +424,7 @@
       flex-shrink: 0;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
       transition: background 0.2s;
     }
 
@@ -867,6 +872,35 @@
       margin-bottom: 0.5rem;
     }
 
+    .cv-signature {
+      margin-top: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+    }
+
+    .cv-signature-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem !important;
+      font-style: normal !important;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35) !important;
+    }
+
+    .cv-signature-name::before {
+      display: none !important;
+    }
+
+    .cv-signature-img {
+      width: 55%;
+      max-width: 240px;
+      opacity: 0.55;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+
     /* ════════════════════════════════════════
        SCROLL STATE TRANSITIONS
     ════════════════════════════════════════ */
@@ -1075,6 +1109,10 @@
 
     <div class="cv-closing">
       <p>A good pilot is always learning.</p>
+      <div class="cv-signature">
+        <p class="cv-signature-name">Denny Rambow</p>
+        <img class="cv-signature-img" src="signature.webp" alt="Signature Denny Rambow" draggable="false" />
+      </div>
     </div>
 
   </section>
@@ -1279,10 +1317,18 @@
     Object.assign(el.style, props);
   }
 
+  let btnReadyTimer = null;
+
   function enterReading() {
     if (isReading) return;
     isReading = true;
     clearTimeout(morphTimer);
+
+    // Show buttons after portrait has landed (DUR + short pause)
+    clearTimeout(btnReadyTimer);
+    btnReadyTimer = setTimeout(() => {
+      document.body.classList.add('buttons-ready');
+    }, DUR + 400);
 
     // 1. Snapshot where the landing portrait is right now
     const from = portraitLand.getBoundingClientRect();
@@ -1325,8 +1371,10 @@
     if (!isReading) return;
     isReading = false;
     clearTimeout(morphTimer);
+    clearTimeout(btnReadyTimer);
 
     document.body.classList.remove('is-reading');
+    document.body.classList.remove('buttons-ready');
 
     // Fade out morph
     applyStyle(portraitMorph, { transition: 'opacity 0.7s ease', opacity: '0' });
@@ -1357,6 +1405,17 @@
     }
   }, { passive: true });
 
+  // ── Video: resume after app switch / tab change (iOS) ─────────────────
+  const bgVideo = document.querySelector('.video-bg video');
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && bgVideo && bgVideo.paused) {
+      bgVideo.play().catch(() => {});
+    }
+  });
+  window.addEventListener('pageshow', () => {
+    if (bgVideo && bgVideo.paused) bgVideo.play().catch(() => {});
+  });
+
   // ── EFIS Button: arm → countdown → launch ─────────────────────────────
   (function () {
     let activeBtn   = null;
@@ -1370,6 +1429,14 @@
       activeBtn   = null;
       activeTimer = null;
     }
+
+    // iOS: bind touchend directly for instant response
+    document.querySelectorAll('.efis-btn').forEach(btn => {
+      btn.addEventListener('touchend', function (e) {
+        e.preventDefault();
+        efisArm(this);
+      }, { passive: false });
+    });
 
     window.efisArm = function (btn) {
       const url = btn.dataset.href;
